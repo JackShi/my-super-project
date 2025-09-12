@@ -9,8 +9,8 @@ from .config import settings
 load_dotenv()
 
 app = FastAPI(
-    title="��y�API",
-    description="��hy��API�",
+    title="超级项目API",
+    description="现代化全栈项目的后端API服务",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -28,7 +28,7 @@ app.include_router(routes.router)
 
 @app.get("/")
 async def root():
-    return {"message": "��y�API�c(�L", "version": "1.0.0"}
+    return {"message": "超级项目API服务正在运行", "version": "1.0.0"}
 
 @app.get("/health")
 async def health_check():

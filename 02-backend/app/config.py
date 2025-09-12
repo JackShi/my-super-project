@@ -3,17 +3,17 @@ from typing import List
 import os
 
 class Settings(BaseSettings):
-    """�(Mn�n"""
+    """应用配置设置"""
     
-    # �(�@Mn
-    APP_NAME: str = "��y�API"
+    # 应用基础配置
+    APP_NAME: str = "超级项目API"
     DEBUG: bool = True
     VERSION: str = "1.0.0"
     
-    # pn�Mn
+    # 数据库配置
     DATABASE_URL: str = "sqlite+aiosqlite:///./app.db"
     
-    # CORSMn
+    # CORS配置
     ALLOWED_ORIGINS: List[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
@@ -21,10 +21,10 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173"
     ]
     
-    # APIMn
+    # API配置
     API_PREFIX: str = "/api"
     
-    # ��Mn
+    # 日志配置
     LOG_LEVEL: str = "INFO"
     
     class Config:
