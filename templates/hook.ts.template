@@ -1,0 +1,60 @@
+import { useState, useCallback } from 'react';
+import { message } from 'antd';
+
+/**
+ * {{HookDescription}}自定义 Hook
+ * 
+ * @example
+ * const { data, loading, error, execute } = use{{HookName}}();
+ * 
+ * useEffect(() => {
+ *   execute(params);
+ * }, [execute]);
+ */
+export const use{{HookName}} = <T,>() => {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  /**
+   * 执行{{OperationDescription}}操作
+   */
+  const execute = useCallback(async (params?: any): Promise<T | null> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // 这里替换为实际的API调用
+      const result = await new Promise<T>((resolve) => {
+        setTimeout(() => resolve({} as T), 1000);
+      });
+
+      setData(result);
+      return result;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '操作失败';
+      setError(errorMessage);
+      message.error(errorMessage);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * 重置状态
+   */
+  const reset = useCallback(() => {
+    setData(null);
+    setError(null);
+    setLoading(false);
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+    execute,
+    reset,
+  };
+};

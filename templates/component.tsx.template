@@ -1,0 +1,88 @@
+import React from 'react';
+import { Button, Space, message } from 'antd';
+import { useApiCall } from '@/hooks/useApi';
+import { DataItem } from '@/types';
+
+interface {{ComponentName}}Props {
+  data: DataItem[];
+  loading?: boolean;
+  onRefresh?: () => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+}
+
+/**
+ * {{ComponentDescription}}
+ * 
+ * @param props - 组件属性
+ * @param props.data - 数据列表
+ * @param props.loading - 加载状态
+ * @param props.onRefresh - 刷新回调
+ * @param props.onEdit - 编辑回调  
+ * @param props.onDelete - 删除回调
+ */
+const {{ComponentName}}: React.FC<{{ComponentName}}Props> = ({
+  data,
+  loading = false,
+  onRefresh,
+  onEdit,
+  onDelete
+}) => {
+  const { call } = useApiCall();
+
+  const handleDelete = async (id: string) => {
+    const confirmed = confirm('确定要删除吗？');
+    if (!confirmed) return;
+
+    const success = await call(() => onDelete?.(id));
+    if (success) {
+      message.success('删除成功');
+      onRefresh?.();
+    }
+  };
+
+  return (
+    <div className="bg-white p-4 rounded-lg shadow">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">{{ComponentTitle}}</h2>
+        <Space>
+          <Button type="primary" onClick={onRefresh} loading={loading}>
+            刷新
+          </Button>
+        </Space>
+      </div>
+
+      <div className="overflow-x-auto">
+        {/* 表格或内容区域 */}
+        {data.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            暂无数据
+          </div>
+        ) : (
+          <div>
+            {/* 数据展示内容 */}
+            {data.map(item => (
+              <div key={item.id} className="border-b py-2">
+                <div>{item.name}</div>
+                <Space>
+                  <Button size="small" onClick={() => onEdit?.(item.id)}>
+                    编辑
+                  </Button>
+                  <Button 
+                    size="small" 
+                    danger 
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    删除
+                  </Button>
+                </Space>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default {{ComponentName}};

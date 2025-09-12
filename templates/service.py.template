@@ -1,0 +1,127 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, delete
+from typing import List, Optional
+import logging
+
+from ..models.{{model_file}} import {{ModelName}}
+from ..models.schemas import {{SchemaName}}
+
+logger = logging.getLogger(__name__)
+
+class {{ServiceName}}:
+    """{{ServiceDescription}}服务类"""
+    
+    @classmethod
+    async def get_list(
+        cls, 
+        db: AsyncSession, 
+        skip: int = 0, 
+        limit: int = 50,
+        search: Optional[str] = None
+    ) -> List[{{SchemaName}}]:
+        """获取{{EntityDescription}}列表
+        
+        Args:
+            db: 数据库会话
+            skip: 跳过条数
+            limit: 每页条数
+            search: 搜索关键词
+            
+        Returns:
+            {{EntityDescription}}列表
+        """
+        try:
+            query = select({{ModelName}}).offset(skip).limit(limit)
+            
+            if search:
+                query = query.where({{ModelName}}.name.ilike(f"%{search}%"))
+                
+            result = await db.execute(query)
+            items = result.scalars().all()
+            
+            return [{{SchemaName}}.from_orm(item) for item in items]
+            
+        except Exception as e:
+            logger.error(f"获取{{EntityDescription}}列表失败: {str(e)}")
+            raise
+
+    @classmethod
+    async def get_by_id(cls, db: AsyncSession, item_id: int) -> Optional[{{SchemaName}}]:
+        """根据ID获取{{EntityDescription}}
+        
+        Args:
+            db: 数据库会话
+            item_id: {{EntityDescription}}ID
+            
+        Returns:
+            {{EntityDescription}}信息，如果不存在返回None
+        """
+        try:
+            result = await db.execute(
+                select({{ModelName}}).where({{ModelName}}.id == item_id)
+            )
+            item = result.scalar_one_or_none()
+            
+            return {{SchemaName}}.from_orm(item) if item else None
+            
+        except Exception as e:
+            logger.error(f"获取{{EntityDescription}}失败: {str(e)}")
+            raise
+
+    @classmethod
+    async def create(cls, db: AsyncSession, data: {{SchemaName}}) -> {{SchemaName}}:
+        """创建{{EntityDescription}}
+        
+        Args:
+            db: 数据库会话
+            data: 创建数据
+            
+        Returns:
+            创建的{{EntityDescription}}
+        """
+        try:
+            # 检查名称是否已存在
+            existing = await db.execute(
+                select({{ModelName}}).where({{ModelName}}.name == data.name)
+            )
+            if existing.scalar_one_or_none():
+                raise ValueError("名称已存在")
+                
+            new_item = {{ModelName}}(**data.dict())
+            db.add(new_item)
+            await db.commit()
+            await db.refresh(new_item)
+            
+            return {{SchemaName}}.from_orm(new_item)
+            
+        except ValueError as e:
+            await db.rollback()
+            raise
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"创建{{EntityDescription}}失败: {str(e)}")
+            raise
+
+    @classmethod
+    async def delete(cls, db: AsyncSession, item_id: int) -> bool:
+        """删除{{EntityDescription}}
+        
+        Args:
+            db: 数据库会话
+            item_id: {{EntityDescription}}ID
+            
+        Returns:
+            是否删除成功
+        """
+        try:
+            result = await db.execute(
+                delete({{ModelName}}).where({{ModelName}}.id == item_id)
+            )
+            await db.commit()
+            
+            return result.rowcount > 0
+            
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"删除{{EntityDescription}}失败: {str(e)}")
+            raise

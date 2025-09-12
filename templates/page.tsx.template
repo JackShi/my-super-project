@@ -1,0 +1,90 @@
+import React, { useState, useEffect } from 'react';
+import { Card, Tabs, Button, Space } from 'antd';
+import { useApiCall } from '@/hooks/useApi';
+import { DataItem } from '@/types';
+import {{ComponentName}} from './components/{{ComponentName}}';
+
+/**
+ * {{PageDescription}}页面
+ * 负责{{BusinessFunction}}功能的展示和管理
+ */
+const {{PageName}}Page: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>('list');
+  const [data, setData] = useState<DataItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const { call } = useApiCall();
+
+  /**
+   * 加载数据
+   */
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      // 这里替换为实际的API调用
+      const result = await call(() => Promise.resolve([] as DataItem[]));
+      if (result) setData(result);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const tabItems = [
+    {
+      key: 'list',
+      label: '列表视图',
+      children: (
+        <{{ComponentName}}
+          data={data}
+          loading={loading}
+          onRefresh={loadData}
+          onEdit={(id) => {
+            console.log('编辑:', id);
+            setActiveTab('edit');
+          }}
+          onDelete={async (id) => {
+            console.log('删除:', id);
+            return true;
+          }}
+        />
+      ),
+    },
+    {
+      key: 'edit',
+      label: '编辑数据',
+      children: (
+        <Card>
+          <div>编辑表单区域</div>
+        </Card>
+      ),
+    },
+  ];
+
+  return (
+    <div className="p-4">
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">{{PageTitle}}</h1>
+        <p className="text-gray-600">{{PageSubtitle}}</p>
+      </div>
+
+      <Tabs
+        activeKey={activeTab}
+        items={tabItems}
+        onChange={setActiveTab}
+        tabBarExtraContent={
+          <Space>
+            <Button type="primary" onClick={loadData} loading={loading}>
+              刷新数据
+            </Button>
+          </Space>
+        }
+      />
+    </div>
+  );
+};
+
+export default {{PageName}}Page;
