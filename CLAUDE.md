@@ -25,6 +25,8 @@
 - 前端：React函数组件 + TypeScript + Tailwind
 - 错误处理完整但简洁
 - 复杂逻辑必须添加注释
+- **每个功能必须包含对应测试**
+- 测试覆盖率保持80%以上
 
 ## 📁 代码模板参考
 本项目提供标准代码模板，生成代码时请优先参考：
@@ -36,6 +38,8 @@
 - `./05-scripts/setup.sh` - 安装依赖
 - `./05-scripts/dev.sh` - 启动开发
 - `./05-scripts/build.sh` - 构建项目
+- `./05-scripts/test-all.sh` - 运行所有测试
+- `./05-scripts/install-hooks.sh` - 安装自动测试钩子
 
 ## ❓ 遇到问题时
 1. 先检查相关规范文档
